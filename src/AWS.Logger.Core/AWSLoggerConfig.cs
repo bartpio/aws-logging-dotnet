@@ -27,6 +27,11 @@ namespace AWS.Logger
         public string LogGroup { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public bool DontCreateLogGroup { get; set; }
+
+        /// <summary>
         /// Gets and sets the Profile property. The profile is used to look up AWS credentials in the profile store.
         /// <para>
         /// For understanding how credentials are determine view the top level documentation for AWSLoggerConfig class.

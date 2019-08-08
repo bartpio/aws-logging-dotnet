@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Amazon;
 using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
+using AWS.Logger.Core;
 using AWS.Logger.TestUtils;
 using Xunit;
 
@@ -77,6 +78,38 @@ namespace AWS.Logger.UnitTest
                     Assert.Equal(regexResult.Groups[1].Value, response.NextSequenceToken);
                 }
             }
+        }
+
+        [Fact]
+        public async Task CoreTest()
+        {
+            var logGroupName = "CoreTest";
+            var logStreamName = "TestMessage";
+
+            client = new AmazonCloudWatchLogsClient(RegionEndpoint.USWest2);
+            await client.CreateLogGroupAsync(new CreateLogGroupRequest
+            {
+                LogGroupName = logGroupName
+            });
+
+            _testFixure.LogGroupNameList.Add(logGroupName);
+
+            var config = new AWSLoggerConfig(logGroupName + "X")
+            {
+                Region = RegionEndpoint.USWest2.SystemName,
+                DontCreateLogGroup = true
+            };
+            var core = new AWSLoggerCore(config, "unit");
+            core.LogLibraryAlert += Core_LogLibraryAlert;
+            core.AddMessage("tst");
+            core.Flush();
+            //core.StartMonitor
+            // "AWS.Logger.UnitTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=47d62aa78bdedb31"
+        }
+
+        private void Core_LogLibraryAlert(object sender, AWSLoggerCore.LogLibraryEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }
